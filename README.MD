@@ -3,15 +3,16 @@
 Bank App.
 <br>
 <br>
-<b>Langs</b>: Golang.
-<br>
-<b>Techies</b>: Gin, Docker, Postgresql, Pgx, Goose.
+<b>Techies</b>: Golang, Gin, Docker, Postgresql, Pgx, Goose.
 <br>
 <hr>
 
 ### How to start local:
 ```
 make run
+```
+```
+make stop
 ```
 
 #### App listening ports by default:
