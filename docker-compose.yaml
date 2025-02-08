@@ -1,0 +1,17 @@
+services:
+
+  bank-postgres:
+    image: postgresql:16
+    ports:
+      - 6432:5432
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+
+  bank-go-app:
+    working_dir: /go-app-dir
+    build: ./backend/Dockerfile.dev
+    volumes:
+      - ./backend:/go-app-dir
+    ports:
+      - "8080:8080"
