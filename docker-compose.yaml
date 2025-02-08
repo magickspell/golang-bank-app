@@ -15,6 +15,8 @@ services:
     image: adminer:4.8.1
     ports:
       - 8081:8080
+    depends_on:
+      - bank-postgres
 
   bank-go-app:
     working_dir: /go-app-dir
@@ -28,3 +30,5 @@ services:
       - ./backend:/go-app-dir
     ports:
       - "8080:8080"
+    depends_on:
+      - bank-postgres

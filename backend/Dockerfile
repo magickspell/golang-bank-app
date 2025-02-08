@@ -1,10 +1,13 @@
-FROM golang:1.23-alpine
+# build
+FROM golang:1.23
 
 WORKDIR /go-app-dir
 
 COPY . .
 
-RUN go mod tidy
-RUN go test -v ./...
+RUN apt-get update && apt-get install -y bash
 
-CMD ["go", "run", "main.go"]
+RUN go mod tidy
+
+# CMD ["go", "run", "main.go"]
+CMD ["sh", "run.sh"]
