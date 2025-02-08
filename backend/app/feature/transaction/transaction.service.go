@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// todo unittests
 type transactionRequest struct {
 	Amount     int  `json:"amount"`
 	UserFromId *int `json:"userFromId"`

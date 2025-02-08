@@ -192,7 +192,7 @@ func TestCreateTransaction(t *testing.T) {
 				return
 			}
 
-			// Проверяем, что все ожидания выполнены
+			// проверяем что все ожидания выполнены
 			mockUserService.AssertCalled(t, "GetUser", test.mockUserTo.Id)
 			mockTransactionService.AssertExpectations(t)
 		})
