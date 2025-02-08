@@ -5,7 +5,7 @@ Bank App.
 <br>
 <b>Langs</b>: Golang.
 <br>
-<b>Techies</b>: Docker, Postgresql,Gin, Pgx, Goose
+<b>Techies</b>: Gin, Docker, Postgresql, Pgx, Goose.
 <br>
 <hr>
 
