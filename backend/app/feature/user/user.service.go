@@ -1,5 +1,5 @@
 package featureUser
 
-func GetUserBalance(userId string) (User, error) {
+func GetUserBalance(userId int) (User, error) {
 	return GetUser(userId)
 }

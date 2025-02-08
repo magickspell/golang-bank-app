@@ -2,6 +2,7 @@ package featureUser
 
 import (
 	db "backend/database"
+	"database/sql"
 	"fmt"
 	"os"
 )
@@ -11,15 +12,14 @@ type User struct {
 	Balance int
 }
 
-type Transaction struct {
-	Id        int
-	Amount    int
-	ToUser    int
-	FromUser  *int
-	CreatedAt string
-}
+type Operation string
 
-func GetUser(userId string) (User, error) {
+const (
+	OPERATION_PLUS  Operation = "plus"
+	OPERATION_MINUS Operation = "minus"
+)
+
+func GetUser(userId int) (User, error) {
 	dbConn := db.Conn()
 	defer dbConn.Close()
 
@@ -35,4 +35,26 @@ func GetUser(userId string) (User, error) {
 		Id:      id,
 		Balance: balance,
 	}, nil
+}
+
+func UpdateUserBalance(userId int, amount int, operation Operation, tran *sql.Tx) error {
+	dbConn := db.Conn()
+	defer dbConn.Close()
+
+	var query string
+	if operation == OPERATION_PLUS {
+		query = "UPDATE users SET balance = balance + $1 WHERE id = $2"
+	}
+	if operation == OPERATION_MINUS {
+		query = "UPDATE users SET balance = balance - $1 WHERE id = $2"
+	}
+
+	_, err := tran.Exec(query, amount, userId)
+	if err != nil {
+		fmt.Println("cant process transaction")
+		fmt.Println(err)
+		return err
+	}
+
+	return nil
 }

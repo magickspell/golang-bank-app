@@ -22,14 +22,14 @@ VALUES
     (5, 300),
     (6, 3000)
 ;
-INSERT INTO transactions (id, user_to, user_from, amount)
+INSERT INTO transactions (user_to, user_from, amount)
 VALUES
-    (1, 1, null, 999999999),
-    (2, 2, 1, 15000),
-    (3, 3, 1, 25000),
-    (4, 4, 1, 1000),
-    (5, 5, 1, 300),
-    (6, 6, 1, 3000)
+    (1, null, 999999999),
+    (2, 1, 15000),
+    (3, 1, 25000),
+    (4, 1, 1000),
+    (5, 1, 300),
+    (6, 1, 3000)
 ;
 
 -- +goose Down
