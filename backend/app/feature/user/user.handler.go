@@ -11,16 +11,16 @@ import (
 func HandleUserBalance(c *gin.Context) {
 	userId, err := strconv.Atoi(c.Query("userId"))
 	if err != nil {
-		c.JSON(500, gin.H{"messege": "cant convert userId"})
+		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
 
 	user, err := GetUserBalance(userId)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			c.JSON(http.StatusNotFound, gin.H{})
+			c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		} else {
-			c.JSON(500, gin.H{})
+			c.JSON(500, gin.H{"error": err.Error()})
 		}
 		return
 	}

@@ -49,11 +49,13 @@ func UpdateUserBalance(userId int, amount int, operation Operation, tran *sql.Tx
 		query = "UPDATE users SET balance = balance - $1 WHERE id = $2"
 	}
 
+	if len(query) == 0 {
+		return fmt.Errorf("query is empty")
+	}
+
 	_, err := tran.Exec(query, amount, userId)
 	if err != nil {
-		fmt.Println("cant process transaction")
-		fmt.Println(err)
-		return err
+		return fmt.Errorf("cant process transaction: '%v'", err)
 	}
 
 	return nil

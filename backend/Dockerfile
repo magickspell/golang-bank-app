@@ -2,11 +2,9 @@ FROM golang:1.23-alpine
 
 WORKDIR /go-app-dir
 
-RUN go install github.com/air-verse/air@latest
-RUN go install github.com/pressly/goose/v3/cmd/goose@latest
+COPY . .
 
-COPY ./ ./
+RUN go mod tidy
+RUN go test -v ./...
 
-RUN go mod download
-
-CMD ["air", "-c", ".air.toml"]
+CMD ["go", "run", "main.go"]

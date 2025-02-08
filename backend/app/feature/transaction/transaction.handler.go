@@ -11,11 +11,10 @@ func HandleUserTransactions(c *gin.Context) {
 	transactions, err := GetTransactions(c.Query("userId"))
 	if err != nil {
 		if err == sql.ErrNoRows {
-			c.JSON(http.StatusNotFound, gin.H{})
+			c.JSON(http.StatusNotFound, gin.H{"messege": "user not found"})
 		} else {
-			c.JSON(500, gin.H{})
+			c.JSON(500, gin.H{"error": err.Error()})
 		}
-
 		return
 	}
 
@@ -27,9 +26,9 @@ func HandleUserTransactions(c *gin.Context) {
 func HandleCreateTransaction(c *gin.Context) {
 	err := CreateTransaction(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, gin.H{"messege": "transaction complete"})
 }

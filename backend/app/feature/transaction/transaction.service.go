@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// todo unittests
 type transactionRequest struct {
 	Amount     int  `json:"amount"`
 	UserFromId *int `json:"userFromId"`
@@ -21,34 +22,31 @@ func GetTransactions(userId string) ([]Transaction, error) {
 func CreateTransaction(c *gin.Context) error {
 	var req transactionRequest
 	if err := c.BindJSON(&req); err != nil {
-		fmt.Println("error: cant process transaction")
-		fmt.Println(err)
-		return fmt.Errorf("error: cant process transaction")
+		return fmt.Errorf("error: cant process transaction request")
 	}
 
 	if req.UserToId == 0 || req.Amount == 0 {
-		fmt.Println("Error: some properties wasnot provided")
 		return fmt.Errorf("error: some properties wasnot provided")
 	}
 
 	_, err := user.GetUserBalance(req.UserToId)
 	if err != nil {
-		fmt.Println("Cant find user [UserToId]:", err)
-		return err
+		return fmt.Errorf("cant find user [UserToId]: '%v'", err)
 	}
 
 	if req.UserFromId != nil {
 		userFrom, err := user.GetUserBalance(*req.UserFromId)
 		if err != nil {
-			fmt.Println("Cant find user [UserFromId]:", err)
-			return err
+			return fmt.Errorf("cant find user [UserFromId]: '%v'", err)
 		}
 		if userFrom.Balance < req.Amount {
-			fmt.Println("баланс меньше суммы перевода")
 			return fmt.Errorf("баланс меньше суммы перевода")
 		}
 	}
 
-	InsertTransaction(req.Amount, req.UserFromId, req.UserToId)
+	err = InsertTransaction(req.Amount, req.UserFromId, req.UserToId)
+	if err != nil {
+		return fmt.Errorf("cant InsertTransaction: '%v'", err)
+	}
 	return nil
 }
