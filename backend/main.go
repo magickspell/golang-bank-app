@@ -13,7 +13,14 @@ import (
 	db "backend/database"
 )
 
+// todo add graceful shutdown
+// todo add logger
+// todo add configLoader
+// todo add auth
+// todo разложить по папочкам красиво все
 func main() {
+	host := os.Getenv("GO_HOST")
+
 	dbConn := db.Conn()
 	defer dbConn.Close()
 
@@ -23,7 +30,6 @@ func main() {
 		dbConn.Close()
 	}
 
-	host := os.Getenv("GO_HOST")
 	// run gin app
 	router := gin.Default()
 	router.GET("/user-balance", userFeature.HandleUserBalance)

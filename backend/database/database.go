@@ -7,6 +7,7 @@ import (
 )
 
 func Conn() *sql.DB {
+	// todo env должно быть только в main.go
 	dbURL := os.Getenv("GO_DB_URL")
 	dbconn, err := sql.Open("pgx", dbURL)
 	if err != nil {

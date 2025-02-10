@@ -8,6 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type UserDTO struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+
 func HandleUserBalance(c *gin.Context) {
 	userId, err := strconv.Atoi(c.Query("userId"))
 	if err != nil {
@@ -15,6 +20,8 @@ func HandleUserBalance(c *gin.Context) {
 		return
 	}
 
+	// todo GetUserBalance должен принимать context первым аргументом
+	// todo GetUserBalance должен принимать DTO
 	user, err := GetUserBalance(userId)
 	if err != nil {
 		if err == sql.ErrNoRows {

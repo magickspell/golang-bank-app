@@ -30,8 +30,8 @@ func GetUserTransactions(userId string) ([]Transaction, error) {
 		userId,
 	)
 	if err != nil {
-		fmt.Printf("error query: '%v'", err)
-		return []Transaction{}, fmt.Errorf("error query: '%v'", err)
+		fmt.Printf("query failed: '%v'", err)
+		return []Transaction{}, fmt.Errorf("query failed: '%w'", err)
 	}
 	defer rows.Close()
 
@@ -40,8 +40,8 @@ func GetUserTransactions(userId string) ([]Transaction, error) {
 		var transaction Transaction
 		err := rows.Scan(&transaction.Id, &transaction.ToUser, &transaction.FromUser, &transaction.Amount, &transaction.CreatedAt)
 		if err != nil {
-			fmt.Printf("error scanning row:: '%v'", err)
-			return nil, fmt.Errorf("error scanning row:: '%v'", err)
+			fmt.Printf("scanning row failde: '%v'", err)
+			return nil, fmt.Errorf("scanning row failde: '%w'", err)
 		}
 		transactions = append(transactions, transaction)
 	}
@@ -59,19 +59,19 @@ func InsertTransaction(amount int, userFrom *int, userTo int) error {
 	// стартуем транзакцию по переводу денег от одного пользователя к другому
 	tran, err := dbConn.Begin()
 	if err != nil {
-		return fmt.Errorf("cant start transaction: '%v'", err)
+		return fmt.Errorf("cant start transaction: '%w'", err)
 	}
 
 	if userFrom != nil {
 		err = user.UpdateUserBalance(*userFrom, amount, user.OPERATION_MINUS, tran)
 		if err != nil {
-			return fmt.Errorf("cant OPERATION_MINUS: '%v'", err)
+			return fmt.Errorf("cant OPERATION_MINUS: '%w'", err)
 		}
 	}
 
 	err = user.UpdateUserBalance(userTo, amount, user.OPERATION_PLUS, tran)
 	if err != nil {
-		return fmt.Errorf("cant OPERATION_PLUS: '%v'", err)
+		return fmt.Errorf("cant OPERATION_PLUS: '%w'", err)
 	}
 
 	_, err = tran.Exec(
@@ -79,13 +79,13 @@ func InsertTransaction(amount int, userFrom *int, userTo int) error {
 		amount, userFrom, userTo,
 	)
 	if err != nil {
-		return fmt.Errorf("unable to insert row: '%v'", err)
+		return fmt.Errorf("unable to insert row: '%w'", err)
 	}
 
 	// комитим транзакцию
 	err = tran.Commit()
 	if err != nil {
-		return fmt.Errorf("unable to commit row: '%v'", err)
+		return fmt.Errorf("unable to commit row: '%w'", err)
 	}
 
 	return nil
