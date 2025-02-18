@@ -1,7 +1,9 @@
 package featureUser
 
 import (
+	cfg "backend/config"
 	db "backend/database"
+	logg "backend/logger"
 	"database/sql"
 	"fmt"
 	"os"
@@ -19,8 +21,8 @@ const (
 	OPERATION_MINUS Operation = "minus"
 )
 
-func GetUser(userId int) (User, error) {
-	dbConn := db.Conn()
+func GetUser(logger *logg.Logger, config *cfg.Config, userId int) (User, error) {
+	dbConn := db.Conn(config)
 	defer dbConn.Close()
 
 	var id, balance int
@@ -37,8 +39,8 @@ func GetUser(userId int) (User, error) {
 	}, nil
 }
 
-func UpdateUserBalance(userId int, amount int, operation Operation, tran *sql.Tx) error {
-	dbConn := db.Conn()
+func UpdateUserBalance(logger *logg.Logger, config *cfg.Config, userId int, amount int, operation Operation, tran *sql.Tx) error {
+	dbConn := db.Conn(config)
 	defer dbConn.Close()
 
 	var query string

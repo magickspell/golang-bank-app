@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func HandleUserTransactions(c *gin.Context) {
+func HandleUserTransactions(dbConn *sql.DB, c *gin.Context) {
 	transactions, err := GetTransactions(c.Query("userId"))
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -23,7 +23,7 @@ func HandleUserTransactions(c *gin.Context) {
 	})
 }
 
-func HandleCreateTransaction(c *gin.Context) {
+func HandleCreateTransaction(dbConn *sql.DB, c *gin.Context) {
 	err := CreateTransaction(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

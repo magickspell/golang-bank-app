@@ -5,6 +5,9 @@ import (
 	"net/http"
 	"strconv"
 
+	cfg "backend/config"
+	logg "backend/logger"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,26 +16,26 @@ type UserDTO struct {
 	Email string `json:"email"`
 }
 
-func HandleUserBalance(c *gin.Context) {
-	userId, err := strconv.Atoi(c.Query("userId"))
+func HandleUserBalance(logger *logg.Logger, config *cfg.Config, gc *gin.Context) {
+	userId, err := strconv.Atoi(gc.Query("userId"))
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		gc.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
 
 	// todo GetUserBalance должен принимать context первым аргументом
 	// todo GetUserBalance должен принимать DTO
-	user, err := GetUserBalance(userId)
+	user, err := GetUserBalance(logger, config, userId)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+			gc.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		} else {
-			c.JSON(500, gin.H{"error": err.Error()})
+			gc.JSON(500, gin.H{"error": err.Error()})
 		}
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	gc.JSON(http.StatusOK, gin.H{
 		"balance": user.Balance,
 	})
 }

@@ -1,8 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
-	"os"
+	"reflect"
 
 	"github.com/gin-gonic/gin"
 
@@ -10,30 +11,48 @@ import (
 
 	transactionFeature "backend/app/feature/transaction"
 	userFeature "backend/app/feature/user"
+	cfg "backend/config"
+	cntx "backend/context"
 	db "backend/database"
+	logg "backend/logger"
 )
 
-// todo add graceful shutdown
 // todo add logger
 // todo add configLoader
-// todo add auth
+// todo подрубить контекст
+// todo сделать DTO
 // todo разложить по папочкам красиво все
+// todo add graceful shutdown
+// todo add auth
+// подрубить ормку GORM
+// todo сделать нормальные тесты
 func main() {
-	host := os.Getenv("GO_HOST")
+	logger := logg.NewLogger()
+	config := cfg.GetConfig(logger)
+	fmt.Println("Type of logger:", reflect.TypeOf(logger))
+	fmt.Println("Type of config:", reflect.TypeOf(config))
+	logger.OuteputLog(logg.LogPayload{Error: fmt.Errorf("error")})
 
-	dbConn := db.Conn()
+	dbConn := db.Conn(config)
 	defer dbConn.Close()
 
 	if err := db.RunMigrations(dbConn); err != nil {
 		log.Fatalf("Migration failed: %v\n", err)
-	} else {
-		dbConn.Close()
 	}
+	// else {
+	// 	dbConn.Close()
+	// }
 
 	// run gin app
 	router := gin.Default()
-	router.GET("/user-balance", userFeature.HandleUserBalance)
-	router.GET("/transactions", transactionFeature.HandleUserTransactions)
-	router.POST("/transactions", transactionFeature.HandleCreateTransaction)
-	router.Run(host)
+	// router.Use(func(gc *gin.Context) {
+	// 	gc.Set("config", config)
+	// 	gc.Set("logger", logger)
+	// 	gc.Next()
+	// })
+	router.Use(cntx.ContextMiddleware(config, logger))
+	router.GET("/user-balance", func(gc *gin.Context) { userFeature.HandleUserBalance(logger, config, gc) })
+	router.GET("/transactions", func(gc *gin.Context) { transactionFeature.HandleUserTransactions(dbConn, gc) })
+	router.POST("/transactions", func(gc *gin.Context) { transactionFeature.HandleCreateTransaction(dbConn, gc) })
+	router.Run(config.Host)
 }
