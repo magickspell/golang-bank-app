@@ -7,7 +7,13 @@ COPY . .
 
 RUN apt-get update && apt-get install -y bash
 
+RUN go install github.com/air-verse/air@latest
+
 RUN go mod tidy
 
-CMD ["go", "run", "main.go"]
+# DEV
+CMD ["air", "-c", ".air.toml"]
+
+# PROD
+# CMD ["go", "run", "main.go"]
 # CMD ["sh", "run.sh"]

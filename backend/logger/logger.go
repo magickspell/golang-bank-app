@@ -16,12 +16,12 @@ type Logger struct {
 }
 
 type LogPayload struct {
-	Info  *string
+	Info  string
 	Error error
 }
 
 func NewLogger() *Logger {
-	lgr := log.Logger.With().Timestamp().Logger()
+	lgr := log.Logger.With().Logger()
 	logg := &Logger{
 		internalLogger: lgr,
 	}
@@ -40,7 +40,7 @@ func (l *Logger) OuteputLog(payload LogPayload) {
 	if payload.Error != nil {
 		l.err().Msg(payload.Error.Error())
 	}
-	if payload.Info != nil {
-		l.log().Msg(*payload.Info)
+	if payload.Info != "" {
+		l.log().Msg(payload.Info)
 	}
 }

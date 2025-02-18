@@ -2,8 +2,12 @@ package featureTransaction
 
 import (
 	user "backend/app/feature/user"
+	cfg "backend/config"
 	db "backend/database"
 	"fmt"
+
+	// cntx "backend/context"
+	logg "backend/logger"
 )
 
 type Transaction struct {
@@ -14,8 +18,8 @@ type Transaction struct {
 	CreatedAt string
 }
 
-func GetUserTransactions(userId string) ([]Transaction, error) {
-	dbConn := db.Conn()
+func GetUserTransactions(logger *logg.Logger, config *cfg.Config, userId string) ([]Transaction, error) {
+	dbConn := db.Conn(config)
 	defer dbConn.Close()
 
 	rows, err := dbConn.Query(
@@ -52,8 +56,8 @@ func GetUserTransactions(userId string) ([]Transaction, error) {
 	return transactions, nil
 }
 
-func InsertTransaction(amount int, userFrom *int, userTo int) error {
-	dbConn := db.Conn()
+func InsertTransaction(logger *logg.Logger, config *cfg.Config, amount int, userFrom *int, userTo int) error {
+	dbConn := db.Conn(config)
 	defer dbConn.Close()
 
 	// стартуем транзакцию по переводу денег от одного пользователя к другому
@@ -63,13 +67,13 @@ func InsertTransaction(amount int, userFrom *int, userTo int) error {
 	}
 
 	if userFrom != nil {
-		err = user.UpdateUserBalance(*userFrom, amount, user.OPERATION_MINUS, tran)
+		err = user.UpdateUserBalance(logger, config, *userFrom, amount, user.OPERATION_MINUS, tran)
 		if err != nil {
 			return fmt.Errorf("cant OPERATION_MINUS: '%w'", err)
 		}
 	}
 
-	err = user.UpdateUserBalance(userTo, amount, user.OPERATION_PLUS, tran)
+	err = user.UpdateUserBalance(logger, config, userTo, amount, user.OPERATION_PLUS, tran)
 	if err != nil {
 		return fmt.Errorf("cant OPERATION_PLUS: '%w'", err)
 	}

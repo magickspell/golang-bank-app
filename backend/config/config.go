@@ -12,22 +12,23 @@ type Config struct {
 	DbURL string
 }
 
-func GetConfig(log *logg.Logger) *Config {
-	dbURL := os.Getenv("GO_DB_URL")
-	host := os.Getenv("GO_HOST")
+func GetConfig(logger *logg.Logger) *Config {
 	cfg := &Config{
-		Host:  host,
-		DbURL: dbURL,
+		Host:  os.Getenv("GO_HOST"),
+		DbURL: os.Getenv("GO_DB_URL"),
 	}
 
-	keyValues := reflect.ValueOf(cfg)
-	for i := 0; i < keyValues.NumField(); i++ {
-		field := keyValues.Field(i)
-		fmt.Printf("Field Name: %v", field)
-		// fmt.Printf("Field Name: %s, Type: %s, Tag: '%s'\n", field.Name, field.Type, field.Tag)
+	logger.OuteputLog(logg.LogPayload{Info: "start parsing config"})
+	keys := reflect.TypeOf(*cfg)
+	values := reflect.ValueOf(*cfg)
+	for i := 0; i < keys.NumField(); i++ {
+		key := keys.Field(i)
+		value := values.Field(i)
+		fmt.Printf("config item: [%v] = %v (length = %v)\n", key.Name, value, value.Len())
+		if value.Len() == 0 {
+			logger.OuteputLog(logg.LogPayload{Error: fmt.Errorf("env has empty value")})
+		}
 	}
-	if len(dbURL) == 0 || len(host) == 0 {
-		log.OuteputLog(logg.LogPayload{Error: fmt.Errorf("env has empty value")})
-	}
+
 	return cfg
 }

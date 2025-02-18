@@ -22,6 +22,7 @@ const (
 )
 
 func GetUser(logger *logg.Logger, config *cfg.Config, userId int) (User, error) {
+	fmt.Println("[GetUser][START]")
 	dbConn := db.Conn(config)
 	defer dbConn.Close()
 

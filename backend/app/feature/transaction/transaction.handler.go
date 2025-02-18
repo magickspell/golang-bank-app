@@ -4,31 +4,35 @@ import (
 	"database/sql"
 	"net/http"
 
+	cfg "backend/config"
+	// cntx "backend/context"
+	logg "backend/logger"
+
 	"github.com/gin-gonic/gin"
 )
 
-func HandleUserTransactions(dbConn *sql.DB, c *gin.Context) {
-	transactions, err := GetTransactions(c.Query("userId"))
+func HandleUserTransactions(logger *logg.Logger, config *cfg.Config, gc *gin.Context) {
+	transactions, err := GetTransactions(logger, config, gc.Query("userId"))
 	if err != nil {
 		if err == sql.ErrNoRows {
-			c.JSON(http.StatusNotFound, gin.H{"messege": "user not found"})
+			gc.JSON(http.StatusNotFound, gin.H{"messege": "user not found"})
 		} else {
-			c.JSON(500, gin.H{"error": err.Error()})
+			gc.JSON(500, gin.H{"error": err.Error()})
 		}
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	gc.JSON(http.StatusOK, gin.H{
 		"transactions": transactions,
 	})
 }
 
-func HandleCreateTransaction(dbConn *sql.DB, c *gin.Context) {
-	err := CreateTransaction(c)
+func HandleCreateTransaction(logger *logg.Logger, config *cfg.Config, gc *gin.Context) {
+	err := CreateTransaction(logger, config, gc)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		gc.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"messege": "transaction complete"})
+	gc.JSON(http.StatusOK, gin.H{"messege": "transaction complete"})
 }

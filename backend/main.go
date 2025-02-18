@@ -45,14 +45,9 @@ func main() {
 
 	// run gin app
 	router := gin.Default()
-	// router.Use(func(gc *gin.Context) {
-	// 	gc.Set("config", config)
-	// 	gc.Set("logger", logger)
-	// 	gc.Next()
-	// })
 	router.Use(cntx.ContextMiddleware(config, logger))
 	router.GET("/user-balance", func(gc *gin.Context) { userFeature.HandleUserBalance(logger, config, gc) })
-	router.GET("/transactions", func(gc *gin.Context) { transactionFeature.HandleUserTransactions(dbConn, gc) })
-	router.POST("/transactions", func(gc *gin.Context) { transactionFeature.HandleCreateTransaction(dbConn, gc) })
+	router.GET("/transactions", func(gc *gin.Context) { transactionFeature.HandleUserTransactions(logger, config, gc) })
+	router.POST("/transactions", func(gc *gin.Context) { transactionFeature.HandleCreateTransaction(logger, config, gc) })
 	router.Run(config.Host)
 }
