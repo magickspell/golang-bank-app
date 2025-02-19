@@ -16,4 +16,5 @@ CMD ["air", "-c", ".air.toml"]
 
 # PROD
 # CMD ["go", "run", "main.go"]
+# PROD с тестами
 # CMD ["sh", "run.sh"]

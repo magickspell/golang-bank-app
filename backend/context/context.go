@@ -29,7 +29,7 @@ func ContextMiddleware(config *cfg.Config, logger *logg.Logger) gin.HandlerFunc 
 			Context:     gc, // передаем в конект контекс гина
 			Config:      config,
 			Logger:      logger,
-			Timeout:     2000, // 3 секунды
+			Timeout:     4000, // 3 секунды
 			IsCancelled: false,
 		}
 
@@ -69,4 +69,7 @@ func ContextMiddleware(config *cfg.Config, logger *logg.Logger) gin.HandlerFunc 
 			gc.AbortWithStatusJSON(408, gin.H{"error": "errCanceld"})
 		}
 	}
+
+	// todo
+	// https://stackoverflow.com/questions/62740163/go-gin-request-cancellation
 }

@@ -51,7 +51,7 @@ func HandleUserBalance(logger *logg.Logger, config *cfg.Config, gc *gin.Context)
 		wg.Wait() // Ожидаем завершения горутины
 	*/
 	// Убираем горутину и WaitGroup, выполняем задержку синхронно
-	time.Sleep(time.Second * 3)
+	time.Sleep(time.Second * 7)
 
 	// todo GetUserBalance должен принимать context первым аргументом
 	// todo GetUserBalance должен принимать DTO
